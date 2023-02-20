@@ -1,4 +1,5 @@
 import { defaultIndicators } from './indicators.js'
+import { Interval } from './interval.js'
 
 export class TradingviewUtils {
   constructor(exchange, symbols, intervals, indicators) {
@@ -8,7 +9,7 @@ export class TradingviewUtils {
 
     this.exchange = exchange.toUpperCase()
     this.symbols = symbols
-    this.intervals = intervals
+    this.intervals = intervals.map((i) => new Interval(i))
 
     if (indicators.length === 0) this.indicators = defaultIndicators
     else this.indicators = indicators
@@ -32,9 +33,7 @@ export class TradingviewUtils {
           dataIndex,
           dataIndex + countIndicators
         )
-        const intervalName = this.defineIntervalName(
-          this.intervals[intervalIndex]
-        )
+        const intervalName = this.intervals[intervalIndex].Name
 
         for (
           let indicatorIndex = 0;
@@ -56,7 +55,7 @@ export class TradingviewUtils {
   defineDataStructure() {
     const intervatDict = Object.assign(
       {},
-      ...this.intervals.map((i) => ({ [this.defineIntervalName(i)]: {} }))
+      ...this.intervals.map((i) => ({ [i.Name]: {} }))
     )
 
     const dataStructure = Object.assign(
@@ -70,7 +69,7 @@ export class TradingviewUtils {
 
   defineRequestData() {
     const requestSymbols = this.symbols.map((s) => this.defineSymbol(s))
-    const requestIntervals = this.intervals.map((i) => this.defineInterval(i))
+    const requestIntervals = this.intervals.map((i) => i.Option)
     const requestIndicators = requestIntervals
       .map((i) => this.defineIndicators(i))
       .flat()
@@ -90,24 +89,6 @@ export class TradingviewUtils {
 
   defineIndicators(interval) {
     return this.indicators.map((i) => i + interval)
-  }
-
-  defineInterval(interval = '') {
-    if (interval === '1m') return '|1'
-    if (interval === '5m') return '|5'
-    if (interval === '15m') return '|15'
-    if (interval === '30m') return '|30'
-    if (interval === '1h') return '|60'
-    if (interval === '2h') return '|120'
-    if (interval === '4h') return '|240'
-    if (interval === '1W') return '|1W'
-    if (interval === '1M') return '|1M'
-    return ''
-  }
-
-  defineIntervalName(interval) {
-    if (interval === '') return '1d'
-    return interval
   }
 
   throwError(errorMessage) {

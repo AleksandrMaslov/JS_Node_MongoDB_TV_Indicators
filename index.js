@@ -11,7 +11,7 @@ function start() {
 
   bot.setMyCommands([
     { command: '/start', description: 'Начальное приветствие' },
-    { command: '/info', description: 'Информация о пользователе' },
+    { command: '/info', description: 'Информация о твоей любимой крипте' },
   ])
 
   bot.on('message', async (msg) => {
@@ -19,8 +19,14 @@ function start() {
     const chatId = msg.chat.id
     const userFirstName = msg.from.first_name
     const userLastName = msg.from.last_name
-    const userName = `${userFirstName !== undefined ? userFirstName : ''} 
-    ${userLastName !== undefined ? userLastName : ''}`
+    const username = msg.from.username
+    const userName = `${userFirstName !== undefined ? userFirstName : ''}-${
+      userLastName !== undefined ? `-${userLastName}` : ''
+    }${username !== undefined ? `(${username})` : ''}`
+
+    console.log()
+
+    console.log(`${userName}: "${text}"`)
 
     if (text === '/start') {
       await bot.sendSticker(
@@ -31,36 +37,37 @@ function start() {
     }
 
     if (text === '/info') {
-      return bot.sendMessage(chatId, `Тебя зовут: ${userName}`, keyboardOptions)
+      return bot.sendMessage(chatId, `Выбери крипту:`, keyboardOptions)
     }
 
     if (text.startsWith('/')) {
-      console.log(text)
       return bot.sendMessage(
         chatId,
         `Я не понимаю такой команды, попробуй еще раз`
       )
     }
 
-    console.log(text)
     return bot.sendMessage(chatId, `Я тебя не понимаю, попробуй еще раз`)
   })
 
   bot.on('callback_query', async (msg) => {
     const chatId = msg.message.chat.id
     const data = msg.data
-    console.log(data)
-    return bot.sendMessage(chatId, data)
+    const userFirstName = msg.from.first_name
+    const userLastName = msg.from.last_name
+    const username = msg.from.username
+    const userName = `${userFirstName !== undefined ? userFirstName : ''}-${
+      userLastName !== undefined ? `-${userLastName}` : ''
+    }${username !== undefined ? `(${username})` : ''}`
+
+    console.log(`${userName} selected: "${data}"`)
+
+    const tradingview = new Tradingview('KUCOIN', [data], ['1d'])
+    const message = JSON.stringify(await tradingview.getIndicators())
+    return bot.sendMessage(chatId, message)
   })
 }
+start()
 
-// start()
-
-const test = new Tradingview(
-  'KUCOIN',
-  ['BTCUSDT'],
-  ['1d']
-  // ['RSI', 'SMA10', 'SMA30']
-)
-
-console.log(await test.getIndicators())
+// const tradingview = new Tradingview('KUCOIN', ['BTCUSDT'], ['1d'])
+// console.log(await tradingview.getIndicators())

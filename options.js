@@ -4,13 +4,15 @@ export const keyboardOptions = {
   reply_markup: JSON.stringify({
     inline_keyboard: [
       [
-        { text: 'Кнопка1', callback_data: '1' },
-        { text: 'Кнопка2', callback_data: '2' },
+        { text: 'BTC', callback_data: 'BTCUSDT' },
+        { text: 'ETH', callback_data: 'ETHUSDT' },
+        { text: 'TXA', callback_data: 'TXAUSDT' },
+        { text: 'TWT', callback_data: 'TWTUSDT' },
       ],
-      [
-        { text: 'Кнопка3', callback_data: '3' },
-        { text: 'Кнопка4', web_app: { url: webAppUrl } },
-      ],
+      // [
+      //   { text: 'Кнопка3', callback_data: '3' },
+      //   { text: 'Кнопка4', web_app: { url: webAppUrl } },
+      // ],
     ],
     // keyboard: [
     //   [

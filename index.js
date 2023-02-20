@@ -1,12 +1,14 @@
 import TelegramApi from 'node-telegram-bot-api'
 
 import { keyboardOptions } from './options.js'
+import { Tradingview } from './tradingview/tradingviewAPI.js'
 
-console.log('Bot is online...')
-const token = '6232959751:AAGyW3KyPIN2fT8cqhXoJ_eVI1bW0Nzjf_s'
-const bot = new TelegramApi(token, { polling: true })
+const TG_BOT_TOKEN = '6232959751:AAGyW3KyPIN2fT8cqhXoJ_eVI1bW0Nzjf_s'
 
 function start() {
+  console.log('Bot is online...')
+  const bot = new TelegramApi(TG_BOT_TOKEN, { polling: true })
+
   bot.setMyCommands([
     { command: '/start', description: 'Начальное приветствие' },
     { command: '/info', description: 'Информация о пользователе' },
@@ -52,4 +54,13 @@ function start() {
   })
 }
 
-start()
+// start()
+
+const test = new Tradingview(
+  'KUCOIN',
+  ['BTCUSDT'],
+  ['1d']
+  // ['RSI', 'SMA10', 'SMA30']
+)
+
+console.log(await test.getIndicators())

@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { TradingviewUtils } from './tradingviewUtils.js'
+import { TradingviewUtils } from './TradingviewUtils.js'
 
 export class Tradingview {
   constructor(exchange, symbols, intervals = [''], indicators = []) {

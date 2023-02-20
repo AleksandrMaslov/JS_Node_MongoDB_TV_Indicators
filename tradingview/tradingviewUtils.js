@@ -1,5 +1,5 @@
-import { defaultIndicators } from './indicators.js'
-import { Interval } from './interval.js'
+import { defaultIndicators } from './Indicators.js'
+import { Interval } from './Interval.js'
 
 export class TradingviewUtils {
   constructor(exchange, symbols, intervals, indicators) {

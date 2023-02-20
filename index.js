@@ -1,13 +1,14 @@
 import TelegramApi from 'node-telegram-bot-api'
 
+import config from './config.js'
 import { keyboardOptions } from './options.js'
 import { Tradingview } from './tradingview/tradingviewAPI.js'
+import { CoinController, DBController } from './controllers/index.js'
 
-const TG_BOT_TOKEN = '6232959751:AAGyW3KyPIN2fT8cqhXoJ_eVI1bW0Nzjf_s'
-
+const token = config.TG_BOT_TOKEN
 function start() {
   console.log('Bot is online...')
-  const bot = new TelegramApi(TG_BOT_TOKEN, { polling: true })
+  const bot = new TelegramApi(token, { polling: true })
 
   bot.setMyCommands([
     { command: '/start', description: 'Начальное приветствие' },
@@ -67,7 +68,14 @@ function start() {
     return bot.sendMessage(chatId, message)
   })
 }
-start()
+// start()
 
 // const tradingview = new Tradingview('KUCOIN', ['BTCUSDT'], ['1d'])
 // console.log(await tradingview.getIndicators())
+
+await DBController.InitSession()
+// await CreateCoin('COINNAME')
+// await CreateCoin('COINNAME2')
+// await CreateCoin('COINNAME3')
+await CoinController.GetAll()
+await DBController.CloseSession()

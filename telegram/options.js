@@ -22,3 +22,8 @@ export const keyboardOptions = {
     // ],
   }),
 }
+
+export const commands = [
+  { command: '/start', description: 'Начальное приветствие' },
+  { command: '/info', description: 'Информация о твоей любимой крипте' },
+]

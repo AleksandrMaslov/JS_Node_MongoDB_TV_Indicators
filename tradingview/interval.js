@@ -18,7 +18,7 @@ export class Interval {
   }
 
   defineIntervalName(interval) {
-    if (interval === '') return '1d'
-    return interval
+    if (interval === '') return 'interval_1d'
+    return `interval_${interval}`
   }
 }

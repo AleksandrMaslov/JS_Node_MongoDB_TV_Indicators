@@ -2,9 +2,17 @@ import mongoose from 'mongoose'
 
 const RecommendSchema = new mongoose.Schema(
   {
-    RecommendAll: Number,
-    RecommendMA: Number,
-    RecommendOther: Number,
+    symbol: {
+      type: String,
+      required: true,
+    },
+    interval: {
+      type: String,
+      required: true,
+    },
+    recommendAll: Number,
+    recommendMA: Number,
+    recommendOther: Number,
   },
   {
     timestamps: true,

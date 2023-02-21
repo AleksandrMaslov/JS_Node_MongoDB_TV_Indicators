@@ -2,8 +2,14 @@ import mongoose from 'mongoose'
 
 const KlineSchema = new mongoose.Schema(
   {
-    symbol: String,
-    interval: String,
+    symbol: {
+      type: String,
+      required: true,
+    },
+    interval: {
+      type: String,
+      required: true,
+    },
     close: Number,
     open: Number,
     volume: Number,

@@ -2,6 +2,14 @@ import mongoose from 'mongoose'
 
 const IndicatorSchema = new mongoose.Schema(
   {
+    symbol: {
+      type: String,
+      required: true,
+    },
+    interval: {
+      type: String,
+      required: true,
+    },
     RSI: Number,
     RSI1: Number,
     StochK: Number,

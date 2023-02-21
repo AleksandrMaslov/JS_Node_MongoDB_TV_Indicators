@@ -7,11 +7,12 @@ import { TelegramBotInit } from './telegram/index.js'
 const tradingview = new Tradingview(
   'KUCOIN',
   ['BTCUSDT', 'ETHUSDT'],
-  ['1d', '1m', '15m', '1h', '1M']
+  ['1d', '1m']
 )
 
 const data = await tradingview.getIndicators()
 
 await DBController.InitSession()
+// await CoinController.ClearDB()
 await CoinController.WriteData(data)
 await DBController.CloseSession()

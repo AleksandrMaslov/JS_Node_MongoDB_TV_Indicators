@@ -4,13 +4,24 @@ import KlineModel from '../models/Kline.js'
 import RecommendModel from '../models/Recommends.js'
 import IndicatorModel from '../models/Indicators.js'
 
+export async function ClearDB() {
+  console.log('Cleaning DB...')
+  await CoinModel.deleteMany()
+  await IntervalModel.deleteMany()
+  await KlineModel.deleteMany()
+  await RecommendModel.deleteMany()
+  await IndicatorModel.deleteMany()
+}
+
 export async function WriteData(data) {
   try {
-    await ClearDB()
-
     for (const [symbol, intervals] of Object.entries(data)) {
-      if (await IsCoinExisting(symbol)) await Update(symbol, intervals)
-      else await Create(symbol, intervals)
+      if (await IsCoinExisting(symbol)) {
+        await Update(symbol, intervals)
+      } else {
+        await AddCoin(symbol, intervals)
+        await Update(symbol, intervals)
+      }
     }
   } catch (error) {
     console.log(error)
@@ -21,54 +32,51 @@ async function IsCoinExisting(symbol) {
   try {
     const coins = await CoinModel.find({ symbol: symbol })
     if (coins.length > 0) {
-      console.log(`Coin "${symbol}" - Found`)
+      console.log(`Coin found...     ${symbol}`)
       return true
     }
   } catch (error) {
     console.log(error)
   }
-  console.log(`Coin "${symbol}" - Not Found`)
+  console.log(`Coin not found... ${symbol}`)
   return false
 }
 
-async function Create(symbol, intervals) {
+async function AddCoin(symbol, intervals) {
   try {
-    console.log(`Creating Coin "${symbol}"...`)
+    console.log(`Creating coin...  ${symbol}`)
     const coinData = { symbol: symbol }
 
     for (const [interval, indicators] of Object.entries(intervals)) {
-      const intervalInstance = await CreateInstance(
-        IntervalModel,
-        await IntervalModelData(symbol, interval, indicators)
-      )
+      const intervalInstance = await CreateInstance(IntervalModel, {
+        symbol: symbol,
+        name: interval,
+      })
+
       coinData[interval] = intervalInstance
     }
 
     await CreateInstance(CoinModel, coinData)
   } catch (error) {
-    console.log(`Coin "${symbol}" creation - Failed`, error)
+    console.log(`Coin creation Failed - ${symbol}`, error)
   }
 }
 
 async function Update(symbol, intervals) {
   try {
-    console.log('UPDATING')
-    // for (const [interval, indicators] of Object.entries(intervals)) {
-    //   console.log(symbol, interval, indicators)
-    // }
+    console.log(`Updating...       ${symbol}`)
 
-    // await CoinModel.updateOne(
-    //   {
-    //     _id: postId,
-    //   },
-    //   {
-    //     title: request.body.title,
-    //     text: request.body.text,
-    //     imageUrl: request.body.imageUrl,
-    //     tags: request.body.tags,
-    //     user: request.body.userId,
-    //   }
-    // )
+    for (const [interval, indicators] of Object.entries(intervals)) {
+      await IntervalModel.updateOne(
+        {
+          symbol: symbol,
+          name: interval,
+        },
+        {
+          $addToSet: await UpdateData(symbol, interval, indicators),
+        }
+      )
+    }
   } catch (error) {
     console.log(error)
   }
@@ -81,31 +89,6 @@ async function CreateInstance(model, modelData) {
     return modelInstance
   } catch (error) {
     console.log(error)
-  }
-}
-
-async function IntervalModelData(symbol, interval, indicators) {
-  const klineInstance = await CreateInstance(
-    KlineModel,
-    KlineModelData(symbol, interval, indicators)
-  )
-
-  const recommendInstance = await CreateInstance(
-    RecommendModel,
-    RecommendModelData(symbol, interval, indicators)
-  )
-
-  const indicatorInstance = await CreateInstance(
-    IndicatorModel,
-    IndicatorModelData(symbol, interval, indicators)
-  )
-
-  return {
-    symbol: symbol,
-    name: interval,
-    klines: [klineInstance],
-    recommends: [recommendInstance],
-    indicators: [indicatorInstance],
   }
 }
 
@@ -221,11 +204,24 @@ function IndicatorModelData(symbol, interval, indicators) {
   }
 }
 
-async function ClearDB() {
-  console.log('Deleting...')
-  await CoinModel.deleteMany()
-  await IntervalModel.deleteMany()
-  await KlineModel.deleteMany()
-  await RecommendModel.deleteMany()
-  await IndicatorModel.deleteMany()
+async function UpdateData(symbol, interval, indicators) {
+  const klineInstance = await CreateInstance(
+    KlineModel,
+    KlineModelData(symbol, interval, indicators)
+  )
+
+  const recommendInstance = await CreateInstance(
+    RecommendModel,
+    RecommendModelData(symbol, interval, indicators)
+  )
+
+  const indicatorInstance = await CreateInstance(
+    IndicatorModel,
+    IndicatorModelData(symbol, interval, indicators)
+  )
+  return {
+    klines: klineInstance,
+    recommends: recommendInstance,
+    indicators: indicatorInstance,
+  }
 }

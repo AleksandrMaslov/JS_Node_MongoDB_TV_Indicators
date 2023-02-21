@@ -1,9 +1,9 @@
 import mongoose from 'mongoose'
 
-const PropSchema = new mongoose.Schema(
+const KlineSchema = new mongoose.Schema(
   {
-    name: String,
     symbol: String,
+    interval: String,
     close: Number,
     open: Number,
     volume: Number,
@@ -16,4 +16,4 @@ const PropSchema = new mongoose.Schema(
   }
 )
 
-export default mongoose.model('Prop', PropSchema)
+export default mongoose.model('Kline', KlineSchema)

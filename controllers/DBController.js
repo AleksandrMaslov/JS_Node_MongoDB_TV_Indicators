@@ -12,7 +12,7 @@ export async function InitSession() {
       `mongodb+srv://${DBLogin}:${DBPassword}@cluster0.gpqznic.mongodb.net/${DBName}?retryWrites=true&w=majority`
     )
     .then(() => {
-      console.log('MongoDB - Connected')
+      console.log('<=== MongoDB - Connected ===>')
     })
     .catch((error) => {
       console.log('MongoDB Error:', error)
@@ -21,6 +21,6 @@ export async function InitSession() {
 
 export async function CloseSession() {
   await mongoose.disconnect().then(() => {
-    console.log('MongoDB - Disconnected')
+    console.log('<=== MongoDB - Disconnected ===>')
   })
 }

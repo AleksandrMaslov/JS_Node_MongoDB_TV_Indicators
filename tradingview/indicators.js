@@ -1,13 +1,64 @@
 export const defaultIndicators = [
-  'Recommend.Other',
   'Recommend.All',
   'Recommend.MA',
+  'Recommend.Other',
+
+  'Rec.Ichimoku',
+  'Rec.VWMA',
+  'Rec.HullMA9',
+  'Rec.Stoch.RSI',
+  'Rec.WR',
+  'Rec.BBPower',
+  'Rec.UO',
+
   'close',
   'open',
   'volume',
   'low',
   'high',
   'change',
+
+  'SMA5',
+  'SMA10',
+  'SMA20',
+  'SMA30',
+  'SMA50',
+  'SMA100',
+  'SMA200',
+  'EMA5',
+  'EMA10',
+  'EMA20',
+  'EMA30',
+  'EMA50',
+  'EMA100',
+  'EMA200',
+
+  'RSI',
+  'RSI[1]',
+
+  'Stoch.K',
+  'Stoch.D',
+  'Stoch.K[1]',
+  'Stoch.D[1]',
+
+  'CCI20',
+  'CCI20[1]',
+
+  'ADX',
+  'ADX+DI',
+  'ADX-DI',
+  'ADX+DI[1]',
+  'ADX-DI[1]',
+
+  'AO',
+  'AO[1]',
+  'AO[2]',
+
+  'Mom',
+  'Mom[1]',
+
+  'MACD.macd',
+  'MACD.signal',
 ]
 
 const indicatorsNotUsed = [

@@ -10,6 +10,10 @@ const IndicatorSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    date: {
+      type: String,
+      required: true,
+    },
     RSI: Number,
     RSI1: Number,
     StochK: Number,

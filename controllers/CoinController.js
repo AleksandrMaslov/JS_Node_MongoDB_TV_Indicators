@@ -3,6 +3,7 @@ import IntervalModel from '../models/Interval.js'
 import KlineModel from '../models/Kline.js'
 import RecommendModel from '../models/Recommends.js'
 import IndicatorModel from '../models/Indicators.js'
+import { GetDate } from '../utils/utils.js'
 
 export async function ClearDB() {
   console.log('Cleaning DB...')
@@ -14,13 +15,14 @@ export async function ClearDB() {
 }
 
 export async function WriteData(data) {
+  const date = GetDate(Date.now())
   try {
     for (const [symbol, intervals] of Object.entries(data)) {
       if (await IsCoinExisting(symbol)) {
-        await Update(symbol, intervals)
+        await Update(symbol, intervals, date)
       } else {
         await AddCoin(symbol, intervals)
-        await Update(symbol, intervals)
+        await Update(symbol, intervals, date)
       }
     }
   } catch (error) {
@@ -62,7 +64,7 @@ async function AddCoin(symbol, intervals) {
   }
 }
 
-async function Update(symbol, intervals) {
+async function Update(symbol, intervals, date) {
   try {
     console.log(`Updating...       ${symbol}`)
 
@@ -73,7 +75,7 @@ async function Update(symbol, intervals) {
           name: interval,
         },
         {
-          $addToSet: await UpdateData(symbol, interval, indicators),
+          $addToSet: await UpdateData(symbol, interval, indicators, date),
         }
       )
     }
@@ -92,10 +94,11 @@ async function CreateInstance(model, modelData) {
   }
 }
 
-function KlineModelData(symbol, interval, indicators) {
+function KlineModelData(symbol, interval, indicators, date) {
   return {
     symbol: symbol,
     interval: interval,
+    date: date,
     close: indicators['close'],
     open: indicators['open'],
     volume: indicators['volume'],
@@ -105,20 +108,22 @@ function KlineModelData(symbol, interval, indicators) {
   }
 }
 
-function RecommendModelData(symbol, interval, indicators) {
+function RecommendModelData(symbol, interval, indicators, date) {
   return {
     symbol: symbol,
     interval: interval,
+    date: date,
     recommendAll: indicators['Recommend.All'],
     recommendMA: indicators['Recommend.MA'],
     recommendOther: indicators['Recommend.Other'],
   }
 }
 
-function IndicatorModelData(symbol, interval, indicators) {
+function IndicatorModelData(symbol, interval, indicators, date) {
   return {
     symbol: symbol,
     interval: interval,
+    date: date,
     RSI: indicators['RSI'],
     RSI1: indicators['RSI[1]'],
     StochK: indicators['Stoch.K'],
@@ -204,21 +209,22 @@ function IndicatorModelData(symbol, interval, indicators) {
   }
 }
 
-async function UpdateData(symbol, interval, indicators) {
+async function UpdateData(symbol, interval, indicators, date) {
   const klineInstance = await CreateInstance(
     KlineModel,
-    KlineModelData(symbol, interval, indicators)
+    KlineModelData(symbol, interval, indicators, date)
   )
 
   const recommendInstance = await CreateInstance(
     RecommendModel,
-    RecommendModelData(symbol, interval, indicators)
+    RecommendModelData(symbol, interval, indicators, date)
   )
 
   const indicatorInstance = await CreateInstance(
     IndicatorModel,
-    IndicatorModelData(symbol, interval, indicators)
+    IndicatorModelData(symbol, interval, indicators, date)
   )
+
   return {
     klines: klineInstance,
     recommends: recommendInstance,

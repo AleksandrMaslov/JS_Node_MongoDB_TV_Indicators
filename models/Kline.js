@@ -10,6 +10,10 @@ const KlineSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    date: {
+      type: String,
+      required: true,
+    },
     close: Number,
     open: Number,
     volume: Number,

@@ -15,7 +15,7 @@ export async function ClearDB() {
 }
 
 export async function WriteData(data) {
-  const date = GetDate(Date.now())
+  const date = Date.now()
   try {
     for (const [symbol, intervals] of Object.entries(data)) {
       if (await IsCoinExisting(symbol)) {

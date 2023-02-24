@@ -4,12 +4,23 @@ import { TelegramBotInit } from './telegram/index.js'
 
 // TelegramBotInit()
 
-const tradingview = new Tradingview('KUCOIN', ['BTCUSDT'], ['1d'])
+const tradingview = new Tradingview('KUCOIN', ['BTCUSDT'], ['1m'])
 
 const data = await tradingview.getIndicators()
-// console.log(data)
+console.log(data)
 
-await DBController.InitSession()
-// await CoinController.ClearDB()
-await CoinController.WriteData(data)
-await DBController.CloseSession()
+async function TestDB() {
+  await DBController.InitSession()
+  await CoinController.ClearDB()
+  await CoinController.WriteData(data)
+  await DBController.CloseSession()
+}
+
+// await TestDB()
+
+// TODO
+// - add all indicator recomendations
+// - fix update function indicators data
+// - add periodic request>update loop
+// - check plotter for date format
+// - deploy
